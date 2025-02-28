@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -27,7 +28,7 @@ public class Board {
     }
 
     public void clearBoard() {
-        if (hasBoardStarted()) {
+        if (!hasBoardStarted()) {
             return;
         }
         for (List<Space> row : spaces) {
@@ -38,34 +39,34 @@ public class Board {
     }
 
     public boolean changeSpaceNumber(int row, int col, int value) {
-        if (hasBoardStarted()) {
+        if (!hasBoardStarted()) {
             return false;
         }
         return spaces.get(row).get(col).setCurrentNumber(value);
     }
 
     public boolean removeSpaceNumber(int row, int col) {
-        if (hasBoardStarted()) {
+        if (!hasBoardStarted()) {
             return false;
         }
         return spaces.get(row).get(col).clearNumber();
     }
 
     public boolean isFinished() {
-        if (hasBoardStarted()) {
+        if (!hasBoardStarted()) {
             return false;
         }
-        return !getBoardStatus().equals(GameStatus.COMPLETE) && !hasErrors();
+        return getBoardStatus().equals(GameStatus.COMPLETE) && !hasErrors();
     }
 
     public GameStatus getBoardStatus() {
-        if (hasBoardStarted()) {
+        if (!hasBoardStarted()) {
             return GameStatus.NOT_STARTED;
         }
 
         boolean empty = false;
         int row = 0;
-        while(!empty) {
+        while (!empty) {
             for (Space space : spaces.get(row)) {
                 empty = isNull(space.getCurrentNumber());
                 if (empty) {
@@ -73,6 +74,7 @@ public class Board {
                 }
             }
             row++;
+            if (row > 8) break;
         }
 
         if (empty) {
@@ -82,7 +84,7 @@ public class Board {
     }
 
     public boolean hasErrors() {
-        if (hasBoardStarted()) {
+        if (!hasBoardStarted()) {
             return false;
         }
         boolean rows = checkRows();
@@ -95,7 +97,7 @@ public class Board {
     private boolean checkRows() {
         boolean error = false;
         for (int row = 0; row < 9; row++) {
-            List<Integer> numberQuantity = List.of(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            List<Integer> numberQuantity = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
             for (Space space : spaces.get(row)) {
                 Integer number = space.getCurrentNumber();
                 if (isNull(number)) {
@@ -113,7 +115,7 @@ public class Board {
     private boolean checkColumns() {
         boolean error = false;
         for (int col = 0; col < 9; col++) {
-            List<Integer> numberQuantity = List.of(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            List<Integer> numberQuantity = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
             for (int row = 0; row < 9; row++) {
                 Integer number = spaces.get(row).get(col).getCurrentNumber();
                 if (isNull(number)) {
@@ -146,7 +148,7 @@ public class Board {
     }
 
     private boolean checkGroup(int groupRow, int groupColumn) {
-        List<Integer> numberQuantity = List.of(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        List<Integer> numberQuantity = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         for (int row = 0 + 3 * groupRow; row < 3 + 3 * groupRow; row++) {
             for (int col = 0 + 3 * groupColumn; col < 3 + 3 * groupColumn; col++) {
                 Integer number = spaces.get(row).get(col).getCurrentNumber();
@@ -160,7 +162,7 @@ public class Board {
     }
 
     public String getCurrentBoard() {
-        if (hasBoardStarted()) {
+        if (!hasBoardStarted()) {
             return "";
         }
         List<String> allSpaces = new ArrayList<>();

@@ -1,9 +1,7 @@
 package model;
 
 public enum GameStatus {
-    NOT_STARTED("Não iniciado"),
-    INCOMPLETE("Incompleto"),
-    COMPLETE("Completo");
+    NOT_STARTED("Não iniciado"), INCOMPLETE("Incompleto"), COMPLETE("Completo");
 
     private String label;
 
