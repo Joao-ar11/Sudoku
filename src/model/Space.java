@@ -10,7 +10,7 @@ public class Space {
         this.fixed = fixed;
     }
 
-    public int getCurrentNumber() {
+    public Integer getCurrentNumber() {
         return currentNumber;
     }
 

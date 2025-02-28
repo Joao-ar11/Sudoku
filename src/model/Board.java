@@ -11,33 +11,55 @@ public class Board {
 
     private List<List<Space>> spaces;
 
-    public Board(String spaces) {
+    public void startGame(String game) {
+        List<List<Space>> newGame = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
             List<Space> row = new ArrayList<>();
             int colLimit = 9 + 9 * i;
             for (int col = 0 + 9 * i; col < colLimit; col++) {
-                Integer number = spaces.charAt(col) == '.' ? null : Integer.parseInt(spaces.substring(col, col + 1));
+                Integer number = game.charAt(col) == '.' ? null : Integer.parseInt(game.substring(col, col + 1));
                 Space space = new Space(number, nonNull(number));
                 row.add(space);
             }
-            this.spaces.add(row);
+            newGame.add(row);
+        }
+        this.spaces = newGame;
+    }
+
+    public void clearBoard() {
+        if (hasBoardStarted()) {
+            return;
+        }
+        for (List<Space> row : spaces) {
+            for (Space space : row) {
+                space.clearNumber();
+            }
         }
     }
 
     public boolean changeSpaceNumber(int row, int col, int value) {
+        if (hasBoardStarted()) {
+            return false;
+        }
         return spaces.get(row).get(col).setCurrentNumber(value);
     }
 
     public boolean removeSpaceNumber(int row, int col) {
+        if (hasBoardStarted()) {
+            return false;
+        }
         return spaces.get(row).get(col).clearNumber();
     }
 
     public boolean isFinished() {
+        if (hasBoardStarted()) {
+            return false;
+        }
         return !getBoardStatus().equals(GameStatus.COMPLETE) && !hasErrors();
     }
 
     public GameStatus getBoardStatus() {
-        if (isNull(spaces)) {
+        if (hasBoardStarted()) {
             return GameStatus.NOT_STARTED;
         }
 
@@ -60,6 +82,9 @@ public class Board {
     }
 
     public boolean hasErrors() {
+        if (hasBoardStarted()) {
+            return false;
+        }
         boolean rows = checkRows();
         boolean cols = checkColumns();
         boolean groups = checkGroups();
@@ -135,13 +160,21 @@ public class Board {
     }
 
     public String getCurrentBoard() {
-        List<Integer> allSpaces = new ArrayList<>();
+        if (hasBoardStarted()) {
+            return "";
+        }
+        List<String> allSpaces = new ArrayList<>();
         spaces.forEach(row -> {
             row.forEach(col -> {
-                allSpaces.add(col.getCurrentNumber());
+                Integer number = col.getCurrentNumber();
+                if (isNull(number)) {
+                    allSpaces.add(" ");
+                } else {
+                    allSpaces.add(number.toString());
+                }
             });
         });
-        return String.format(BOARD_TEMPLATE, allSpaces);
+        return String.format(BOARD_TEMPLATE, allSpaces.toArray());
     }
 
     public List<List<Space>> getSpaces() {
@@ -150,5 +183,9 @@ public class Board {
 
     public void setSpaces(List<List<Space>> spaces) {
         this.spaces = spaces;
+    }
+
+    public boolean hasBoardStarted() {
+        return nonNull(spaces);
     }
 }
